@@ -14,6 +14,8 @@ p = 20;
 c = 10;
 r = 4;
 
+hss = 50; %historical sample size
+
 n = 10000; %number of simulations
 
 q = optimal_order_quantity(mu, sigma, p, c, r);
@@ -48,7 +50,6 @@ saveas(gcf, 'results/figures/sample_size_regret.png');
 %% Experiment 2: Salvage price uncertainty
 
 se = [0 0.5 1 2 3 4 5]; %salvage error
-hss = 50; %historical sample size
 
 [mean_ratio_salvage, mean_regret_salvage] = run_experiment_salvage_uncertainty( ...
     se, hss, n, mu, sigma, p, c, r);
@@ -71,11 +72,8 @@ saveas(gcf, 'results/figures/salvage_uncertainty_regret.png');
 
 %% Experiment 3: Cost asymmetry
 
-sp = [0 2 4 6 8 9];
-
-%different salvage prices
-
-[cost_ratios, mean_ratio_cost, mean_regret_cost] = run_experiment_cost_asymmetry(sp, hss, n, mu, sigma, p, c);
+[cost_ratios, mean_ratio_cost, mean_regret_cost] = ...
+    run_experiment_cost_asymmetry(hss, n, mu, sigma);
 
 figure;
 plot(cost_ratios, mean_ratio_cost, '-o', 'LineWidth', 1.5);
@@ -92,6 +90,8 @@ ylabel('Mean regret');
 title('Expected regret under different cost ratios');
 grid on;
 saveas(gcf, 'results/figures/cost_asymmetry_regret.png');
+
+disp(cost_ratios)
 
 %% Experiment 4: Coefficient of variation
 
@@ -121,18 +121,21 @@ saveas(gcf, 'results/figures/cv_regret.png');
 %% Summary tables
 
 T_sample = table(ss', mean_ratio_sample', mean_regret_sample', ...
-    'VariableNames', {'SampleSize', 'MeanPerformanceRatio', 'MeanRegret'});
+    'VariableNames', {'SampleSize', 'MeanPerformance Ratio', 'MeanRegret'});
 
 T_salvage = table(se', mean_ratio_salvage', mean_regret_salvage', ...
-    'VariableNames', {'SalvageErrorStd', 'MeanPerformanceRatio', 'MeanRegret'});
+    'VariableNames', {'SalvageError', 'MeanPerformance Ratio', 'MeanRegret'});
 
 T_cv = table(rho', mean_ratio_rho', mean_regret_rho', ...
-    'VariableNames', {'CoefficientOfVariation', 'MeanPerformanceRatio', 'MeanRegret'});
+    'VariableNames', {'CoefficientOfVariation', 'MeanPerformance Ratio', 'MeanRegret'});
 
+T_cost = table(cost_ratios', mean_ratio_cost',mean_regret_cost', ...
+    'VariableNames', {'CostRatio', 'MeanPerformanceRatio', 'MeanRegret'});
+
+writetable(T_cost, 'results/tables/cost_asymmetry_results.csv');
 writetable(T_sample, 'results/tables/sample_size_results.csv');
 writetable(T_salvage, 'results/tables/salvage_uncertainty_results.csv');
 writetable(T_cv, 'results/tables/cv_results.csv');
 
-disp(T_sample);
-disp(T_salvage);
-disp(T_cv);
+
+

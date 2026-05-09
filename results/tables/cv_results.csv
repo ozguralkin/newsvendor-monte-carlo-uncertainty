@@ -1,4 +1,4 @@
-CoefficientOfVariation,MeanPerformanceRatio,MeanRegret
+CoefficientOfVariation,MeanPerformance Ratio,MeanRegret
 0.05,0.999677807823907,0.312418276871329
 0.1,0.999321168547985,0.637645906906987
 0.15,0.998944607212821,0.959344805499069
